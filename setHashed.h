@@ -10,7 +10,7 @@ class setHashed{
 private:
     std::vector<std::list<int>> table;
     size_t size;
-    int hash(int key){
+    int hash(int key) const{
         return key % size;
     }
 
@@ -30,7 +30,7 @@ public:
         table[index].push_back(value);
     }
 
-    bool contains(int value){
+    bool contains(int value) const {
         int index = hash(value);
 
         for(auto const &element : table[index]){
@@ -49,9 +49,55 @@ public:
         }
     }
 
-    setHashed operator+(const setHashed& other);
-    setHashed operator-(const setHashed& other);
-    setHashed operator&(const setHashed& other);
+    setHashed operator+(const setHashed& other){
+        setHashed nowy(this->size);
+
+        for(const auto &bucket : this->table){
+            for(int elem : bucket){
+                nowy.insert(elem);
+            }
+        }
+
+        for(const auto &bucket : other.table){
+            for(int elem : bucket){
+                nowy.insert(elem);
+            }
+        }
+
+        return nowy;
+    }
+
+
+    setHashed operator-(const setHashed &other){
+        setHashed nowy(this -> size);
+
+        for(const auto &bucket : this->table){
+            for(int elem : bucket){
+                if(!other.contains(elem)) nowy.insert(elem);
+            }
+        }
+        return nowy;
+    }
+
+    setHashed operator&(const setHashed& other){
+        setHashed nowy(this->size);
+
+        for(const auto &bucket : this->table){
+            for(int elem : bucket){
+                if(other.contains(elem)) nowy.insert(elem);
+            }
+        }
+        return nowy;
+    }
+
+    bool operator==(const setHashed& other) const {
+        for(const auto &bucket : this->table){
+            for(int elem : bucket){
+                if(!other.contains(elem)) return false;
+            }
+        }
+        return true;
+    }
 
 
 };
