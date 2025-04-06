@@ -4,113 +4,87 @@
 #include <fstream>
 #include <random>
 
+const int MAX_SIZE = 1000;
 std::ofstream file("time.dat");
 
-void wstawianie(setHashed zbior, int iteration){
-    auto start = std::chrono::high_resolution_clock::now();
-    zbior.insert(iteration);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start). count();
-    file << iteration << " " << duration << std::endl;
-}
+void measure_operation(int operation_type) {
+    for (int size = 1; size <= MAX_SIZE; ++size) {
+        setHashed zbior(size);
+        setHashed zbior2(size);
 
-void usuwanie(setHashed zbior, int iteration){
-    auto start = std::chrono::high_resolution_clock::now();
-    zbior.removing(iteration);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start). count();
-    file << iteration << " " << duration << std::endl;
-}
 
-void zawieranie(setHashed zbior, int iteration){
-    auto start = std::chrono::high_resolution_clock::now();
-    zbior.contains(iteration);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start). count();
-    file << iteration << " " << duration << std::endl;
-}
+        for (int i = 0; i < size; ++i) {
+            zbior.insert(i);
+            zbior2.insert(i + size / 2);
+        }
 
-void suma(setHashed zb_1, setHashed zb_2, int iteration){
-    auto start = std::chrono::high_resolution_clock::now();
-    setHashed sumaa = zb_1 + zb_2;
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start). count();
-    file << iteration << " " << duration << std::endl;
-}
+        auto start = std::chrono::high_resolution_clock::now();
 
-void roznica(setHashed zb_1, setHashed zb_2, int iteration){
-    auto start = std::chrono::high_resolution_clock::now();
-    setHashed roznicaa = zb_1 - zb_2;
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start). count();
-    file << iteration << " " << duration << std::endl;
-}
+        switch (operation_type) {
+            case 1:
+                zbior.insert(size + 1);
+                break;
+            case 2:
+                zbior.removing(size / 2);
+                break;
+            case 3:
+                zbior.contains(size / 2);
+                break;
+            case 4: {
+                auto tmp = zbior + zbior2;
+                break;
+            }
+            case 5: {
+                auto tmp = zbior - zbior2;
+                break;
+            }
+            case 6: {
+                auto tmp = zbior & zbior2;
+                break;
+            }
+            case 7: {
+                bool tmp = zbior == zbior2;
+                break;
+            }
+            default:
+                break;
+        }
 
-void czesc_wspolna(setHashed zb_1, setHashed zb_2, int iteration){
-    auto start = std::chrono::high_resolution_clock::now();
-    setHashed wspolna = zb_1 & zb_2;
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start). count();
-    file << iteration << " " << duration << std::endl;
-}
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
-void przystawanie(setHashed zb_1, setHashed zb_2, int iteration){
-    auto start = std::chrono::high_resolution_clock::now();
-    bool przystawaniee = zb_1 == zb_2;
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start). count();
-    file << iteration << " " << duration << std::endl;
+        file << size << " " << duration << "\n";
+    }
 }
 
 
 int main() {
-
-    if(!file){
+    if(!file) {
         std::cerr << "Nie udalo sie otworzyc pliku" << std::endl;
         return -1;
     }
 
+    std::cout << "__________MENU__________\n";
+    std::cout << "1. wstawianie\n";
+    std::cout << "2. usuwanie\n";
+    std::cout << "3. zawieranie\n";
+    std::cout << "4. suma\n";
+    std::cout << "5. roznica\n";
+    std::cout << "6. czesc wspolna\n";
+    std::cout << "7. identycznosc\n";
+    std::cout << "Wybor: ";
+
     int wybor;
-    std::cout << "__________MENU__________ " << std::endl;
-    std::cout << "1. wstawianie " << std::endl;
-    std::cout << "2. usuwanie " << std::endl;
-    std::cout << "3. zawieranie " << std::endl;
-    std::cout << "4. suma " << std::endl;
-    std::cout << "5. roznica " << std::endl;
-    std::cout << "6. czesc wspolna " << std::endl;
-    std::cout << "7. identycznosc " << std::endl;
-    std::cout << "Wybor: " << std::endl;
     std::cin >> wybor;
 
-    switch(wybor){
-        case 1:{
-           break;
-        }
-        case 2:{
-
-            break;
-        }
-        case 3:{
-            break;
-        }
-        case 4:{
-            break;
-        }
-        case 5:{
-            break;
-        }
-        case 6:{
-            break;
-        }
-        case 7:{
-            break;
-        }
-        default:{
-            std::cout << "Zly numer ;c" << std::endl;
-            return -2;
-        }
+    if(wybor < 1 || wybor > 7) {
+        std::cout << "Nieprawidlowy wybor\n";
+        return -2;
     }
 
+    measure_operation(wybor);
+    file.close();
 
+    std::cout << "Pomiar zakonczony. Wyniki w pliku time.dat\n";
     return 0;
 }
