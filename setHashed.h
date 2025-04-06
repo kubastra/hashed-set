@@ -4,27 +4,33 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <utility>
 
 class setHashed{
 private:
-    std::vector<std::list<std::pair<int, int>>> table;
+    std::vector<std::list<int>> table;
     size_t size;
     int hash(int key){
-        return key % table.size();
+        return key % size;
     }
+
 public:
-    setHashed(){}
-    setHashed(std::vector<std::list<std::pair<int, int>>>);
-
-    void insert(std::pair<int, int>){
-        int index = hash(table.size());
-        if(table[index].empty()){
-            table[index].push_back(std::pair<int, int>());
-        }else{
-
-        }
+    explicit setHashed(size_t rozmiar_tablicy) : size(rozmiar_tablicy){
+        table.resize(size);
     }
-    void contain(std::pair<int, int>);
+
+    void insert(int value){
+        int index = hash(value);
+
+        for(const auto &element : table[index]){
+            if(element == value){
+                return;
+            }
+        }
+        table[index].push_back(value);
+
+    }
+    void contains(std::pair<int, int>);
     void removing(std::pair<int, int>);
 
     setHashed operator+(const setHashed& other);
