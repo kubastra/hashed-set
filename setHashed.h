@@ -28,10 +28,26 @@ public:
             }
         }
         table[index].push_back(value);
-
     }
-    void contains(std::pair<int, int>);
-    void removing(std::pair<int, int>);
+
+    bool contains(int value){
+        int index = hash(value);
+
+        for(auto const &element : table[index]){
+            if(element == value) return true;
+        }
+        return false;
+    }
+
+    void removing(int value){
+        int index = hash(value);
+
+        auto &bucket = table[index];
+        for(auto it = bucket.begin(); it != bucket.end(); it++){
+            if(*it == value) bucket.erase(it);
+            return;
+        }
+    }
 
     setHashed operator+(const setHashed& other);
     setHashed operator-(const setHashed& other);
