@@ -4,12 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <utility>
 
 class setHashed{
 private:
     std::vector<std::list<int>> table;
     size_t size;
+    
     int hash(int key) const{
         return key % size;
     }
@@ -101,7 +101,5 @@ public:
 
 
 };
-
-
 
 #endif
